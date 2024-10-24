@@ -1,0 +1,25 @@
+services:
+  db:
+    container_name: audio_analyser_db
+    environment:
+      POSTGRES_DB: <dbname>
+      POSTGRES_PASSWORD: <password>
+      POSTGRES_USER: <username>
+    image: postgres:latest
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+  web:
+    container_name: audio_analyser_app
+    depends_on:
+    - db
+    environment:
+    - PYTHONUNBUFFERED=1
+    - SQLALCHEMY_DATABASE_URI=postgresql://<username>:<password>@db:5432/<dbname>
+    image: tiangolo/uvicorn-gunicorn-fastapi:python3.12
+    ports:
+    - 8000:80
+    volumes:
+    - ./:/app
+version: '3.8'
+volumes:
+  postgres_data: {}
